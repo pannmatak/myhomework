@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rupp.homework.dao.StudentDao">
+
+	<select id="getAll" resultType="StudentDto">
+		SELECT 
+			*
+		FROM 
+			students
+	</select>
+	
+	<insert id="save">
+		INSERT INTO students (
+			stu_code,         
+		    stu_name,          
+		    stu_gender,        
+		    stu_age,           
+		    stu_db,         
+		    stu_address
+		) 
+		VALUES ( 
+			#{stu_code},         
+		    #{stu_name},          
+		    #{stu_gender},        
+		    #{stu_age},           
+		    #{stu_db},         
+		    #{stu_address}
+		)
+	</insert> 
+	
+	<update id="editById">
+		UPDATE students SET 
+			stu_name = #{stu_name},          
+		    stu_gender = #{stu_gender},        
+		    stu_age = #{stu_age},           
+		    stu_db = #{stu_db},         
+		    stu_address = #{stu_address}
+		WHERE 
+			stu_code = #{stu_code}
+	</update>
+	
+	<delete id="deleteById">
+		DELETE FROM
+			students
+		WHERE 
+			stu_code = #{stu_code}
+	</delete>
+	
+	<select id="getRecords" resultType="Integer">
+		SELECT
+			count(stu_code)
+		FROM
+			students
+		<if test="stu_code != null and stu_code != ''">
+      		WHERE 
+      			stu_code = #{stu_code}
+      	</if>
+	</select>
+	
+	<select id="getPageable" resultType="StudentDto">
+		SELECT *
+		FROM (
+				SELECT ROW_NUMBER() OVER(ORDER BY  ${sidx} ${sord}) AS RowNum, *
+      			FROM 
+      				students
+      				<if test="stu_code != null and stu_code != ''">
+      					WHERE 
+      						stu_code = #{stu_code}
+      				</if>
+     		) as alias
+		WHERE 
+			RowNum 
+		BETWEEN 
+			#{startIndex}
+		AND 
+			#{endIndex}
+	</select>
+	
+	<select id="countStudentById" resultType="Integer">
+		SELECT
+			count(stu_code)
+		FROM
+			students
+		<if test="stu_code != null and stu_code != ''">
+      		WHERE 
+      			stu_code = #{stu_code}
+      	</if>
+	</select>
+	
+</mapper>
